@@ -9,7 +9,7 @@ type SelectedMenu = {
 };
 
 type MenuSelected = {
-  selectedMenu: MenuIds; // Змінено тип
+  selectedMenu: SelectedMenu;
 };
 
 type MenuAction = {
@@ -19,7 +19,6 @@ type MenuAction = {
 type PropsProvider = {
   children: ReactNode;
 };
-
 
 function MenuProvider({ children }: PropsProvider) {
   const [selectedMenu, setSelectedMenu] = useState<SelectedMenu>({id: 'first'});
@@ -33,12 +32,10 @@ function MenuProvider({ children }: PropsProvider) {
 
   const menuContextSelected = useMemo(
     () => ({
-      selectedMenu: selectedMenu.id, 
+      selectedMenu,
     }),
     [selectedMenu]
   );
-
-
 
   return (
     <MenuActionContext.Provider value={menuContextAction}>
@@ -62,7 +59,7 @@ function MenuComponent({ menus }: PropsMenu) {
       {menus.map((menu) => (
         <div key={menu.id} onClick={() => onSelectedMenu({ id: menu.id })}>
           {menu.title}{" "}
-          {selectedMenu === "idle" ? "Not selected" : "Selected"} 
+          {selectedMenu.id === menu.id ? "Selected" : "Not selected"}
         </div>
       ))}
     </>
@@ -93,7 +90,7 @@ export function ComponentApp() {
 }
 
 const MenuSelectedContext = createContext<MenuSelected>({
-  selectedMenu: "idle", // Оновлено значення
+  selectedMenu: {id: 'first'},
 });
 
 const MenuActionContext = createContext<MenuAction>({
